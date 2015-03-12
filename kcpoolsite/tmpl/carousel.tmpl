@@ -14,13 +14,17 @@
 <div id="{{Name}}" class="carousel slide" data-ride="carousel">
 	<!-- Indicators -->
 	<ol class="carousel-indicators">
-		{{Indicators}}
+		{{ range $IdicatorData := Indicators}}
+			{{ partial "indicatorItem" $IndicatorData }}
+		{{end}}
 	</ol>
 	
 	<!-- Wrapper for slides -->
 	<div class="carousel-inner" role="listbox">
-		{{Items}}
-	</div>
+		{{range $itemData := Items}}
+			{{partial "slideItem" $itemData}}
+		{{end}}
+	</div>$i$i
 	
 	<!-- Controls -->
 	<a class="left carousel-control" href="#{{Name}}" role="button" data-slide="prev">
