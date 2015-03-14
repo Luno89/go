@@ -8,14 +8,14 @@
 {{end}}
 
 {{define "indicatorItem"}}
-<li data-target="#{{Name}}_indicator_{{Index}}" data-slide-to="{{Index}}" {{Active}}></li>
+<li data-target="#{{Name}}_indicator_{{Index}}" data-slide-to="{{Index}}" class="{{Active}}"></li>
 {{end}}
 
 <div id="{{Name}}" class="carousel slide" data-ride="carousel">
 	<!-- Indicators -->
 	<ol class="carousel-indicators">
-		{{ range $IdicatorData := Indicators}}
-			{{ partial "indicatorItem" $IndicatorData }}
+		{{range $IdicatorData := Indicators}}
+			{{partial "indicatorItem" $IndicatorData}}
 		{{end}}
 	</ol>
 	
