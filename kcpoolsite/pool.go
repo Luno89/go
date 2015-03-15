@@ -36,6 +36,32 @@ type indicator struct {
 
 var templates = template.Must(template.ParseFiles("tmpl/home.html","tmpl/carousel.tmpl"))
 var validPath = regexp.MustCompile("^/(home|view)/([a-zA-z0-9]+)$")
+var imgPaths = getImgs("data/carousel_imgs")
+
+func isImg(s string) (bool) {
+	switch s {
+		case Contains(s, "jpg"):
+			return true
+		case Contains(s, "png"):
+			return true
+		case Conatins(s, "tif"):
+			return true
+		case Contains(s, "gif"):
+			return true
+	}
+	return false
+}
+
+func getImgs(path string) (*[]string, error){
+	var fileInfos = ReadDir(path)
+	var pathList := make([]string, len(fileInfos))
+	for i := 0; i < len(fileInfos); i++ {
+		if !fileInfos[i].IsDir && isImg(fileInfos[i].Name) {
+			pathList = append(pathList, fileInfos[i].Name)
+		}
+	}
+	return &pathList
+}
 
 func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 	p, err := loadPage(title)
