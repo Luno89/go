@@ -38,6 +38,20 @@ var templates = template.Must(template.ParseFiles("tmpl/home.html","tmpl/carouse
 var validPath = regexp.MustCompile("^/(home|view)/([a-zA-z0-9]+)$")
 var imgPaths = getImgs("data/carousel_imgs")
 
+func (c *carousel) init(imgs *[]string) {
+	c.Name = "carousel_imgs"
+	for i := 0; i < len(imgs); i++ {
+		var active = ""
+		if i == 0 {
+			active = "active"
+		}
+		var temp := item{imgs[i], "image", active, ""}
+		var indicator := indicator{c.Name, i, active}
+		append(c.Items, temp)
+		append(c.Indicators, indicator)
+	}
+}
+
 func isImg(s string) (bool) {
 	switch s {
 		case Contains(s, "jpg"):
