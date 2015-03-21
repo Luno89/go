@@ -1,0 +1,26 @@
+{{define "featurette-divier"}}
+<hr class="featurette-divier">
+{{end}}
+
+{{if .isPushed}}
+	{{$leftclass = "col-md-push-5"}}
+	{{$rightclass = "cool-md-pull-7"}}
+{{end}}
+
+<div id={{.Name}} class="row featurette">
+	::before
+	<div class="col-md-7 {{$leftclass}}" >
+		<h2 class="featurette-heading">
+			{{.Heading}}
+		</h2>
+		<p class="lead">
+			{{.Body}}
+		</p>
+	</div>
+	<div class="col-md-5 {{$rightclass}}>
+		<img class="featurette-image img-responsive center-block"
+		data-src="{{.SrcData}}" alt="500x500" src="{{.ImgPath}}"
+		data-holder-rendered="true">
+	</div>
+	::after
+</div>
