@@ -23,7 +23,7 @@ type item struct {
 	Src string
 	Alt string
 	Active string
-	Caption byte[]
+	Caption []byte
 }
 
 // indicator item data
@@ -45,8 +45,8 @@ func (c *carousel) init(imgs *[]string) {
 		if i == 0 {
 			active = "active"
 		}
-		var temp := item{imgs[i], "image", active, ""}
-		var indicator := indicator{c.Name, i, active}
+		temp := item{imgs[i], "image", active, ""}
+		indicator := indicator{c.Name, i, active}
 		append(c.Items, temp)
 		append(c.Indicators, indicator)
 	}
@@ -68,7 +68,7 @@ func isImg(s string) (bool) {
 
 func getImgs(path string) (*[]string, error){
 	var fileInfos = ReadDir(path)
-	var pathList := make([]string, len(fileInfos))
+	pathList := make([]string, len(fileInfos))
 	for i := 0; i < len(fileInfos); i++ {
 		if !fileInfos[i].IsDir && isImg(fileInfos[i].Name) {
 			pathList = append(pathList, fileInfos[i].Name)
@@ -80,12 +80,44 @@ func getImgs(path string) (*[]string, error){
 func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 	p, err := loadPage(title)
 	if err != nil {
-		http.Redirect(w, r, , http.StatusFound)
+		http.Redirect(w, r, "/home", http.StatusFound)
 		return
 	}
 	renderTemplate(w, "view", p)
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "home", )
+	renderTemplate(w, "home", "")
+}
+
+func makeHandler(fn func (http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		m := validPath.FindStringSubmatch(r.URL.Path)
+		if m == nil {
+			http.NotFound(w,r)
+			return
+		}
+		fn(w, r, m[2])
+	}		
+}
+
+func main() {
+	flag.Parse()
+	http.HandleFunc("/view/", makeHandler(viewHandler))
+	http.HandleFunc("/", indexHandler)
+	
+	if *addr {
+		l, err := net.Listen("tcp", "127.0.0.1:0")
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = ioutil.WriteFile("final-port.txt", []byte(l.Addr().String()), 644)
+		if err != nil {
+			log.Fatal(err)
+		}
+		s := &http.Server{}
+		s.Serve(l)
+		return
+	}
+	http.ListenAndServe(":8080", nil)
 }
