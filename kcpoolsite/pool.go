@@ -8,7 +8,7 @@ import (
     "net"
     "net/http"
     "regexp"
-    "errors"
+    "strings"
 )
 
 // carousel data
@@ -23,7 +23,7 @@ type item struct {
 	Src string
 	Alt string
 	Active string
-	Caption []byte
+	Caption string
 }
 
 // indicator item data
@@ -36,45 +36,45 @@ type indicator struct {
 
 var templates = template.Must(template.ParseFiles("tmpl/home.html","tmpl/carousel.tmpl"))
 var validPath = regexp.MustCompile("^/(home|view)/([a-zA-z0-9]+)$")
-var imgPaths = getImgs("data/carousel_imgs")
+var imgPaths, err = getImgs("data/carousel_imgs")
 
-func (c *carousel) init(imgs *[]string) {
+func (c *carousel) init(imgs []string) {
 	c.Name = "carousel_imgs"
-	for i := 0; i < len(imgs); i++ {
+	for i, value := range imgs {
 		var active = ""
 		if i == 0 {
 			active = "active"
 		}
 		temp := item{imgs[i], "image", active, ""}
 		indicator := indicator{c.Name, i, active}
-		append(c.Items, temp)
-		append(c.Indicators, indicator)
+		c.Items = append(c.Items, temp)
+		c.Indicators = append(c.Indicators, indicator)
 	}
 }
 
-func isImg(s string) (bool) {
-	switch s {
-		case Contains(s, "jpg"):
+func isImg(s string) bool {
+	switch {
+		case strings.Contains(s, "jpg"):
 			return true
-		case Contains(s, "png"):
+		case strings.Contains(s, "png"):
 			return true
-		case Conatins(s, "tif"):
+		case strings.Contains(s, "tif"):
 			return true
-		case Contains(s, "gif"):
+		case strings.Contains(s, "gif"):
 			return true
 	}
 	return false
 }
 
 func getImgs(path string) (*[]string, error){
-	var fileInfos = ReadDir(path)
+	var fileInfos, err = ioutil.ReadDir(path)
 	pathList := make([]string, len(fileInfos))
 	for i := 0; i < len(fileInfos); i++ {
-		if !fileInfos[i].IsDir && isImg(fileInfos[i].Name) {
-			pathList = append(pathList, fileInfos[i].Name)
+		if fileInfos[i].IsDir() != true && isImg(fileInfos[i].Name()) {
+			pathList = append(pathList, fileInfos[i].Name())
 		}
 	}
-	return &pathList
+	return &pathList, err
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
