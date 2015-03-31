@@ -33,6 +33,12 @@ type indicator struct {
 	Active string
 }
 
+// page struct
+type page struct {
+	Heading string
+	Body string
+	Footer string
+}
 
 var templates = template.Must(template.ParseFiles("tmpl/home.html","tmpl/carousel.tmpl"))
 var validPath = regexp.MustCompile("^/(home|view)/([a-zA-z0-9]+)$")
