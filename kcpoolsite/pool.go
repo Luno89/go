@@ -33,16 +33,13 @@ type indicator struct {
 	Active string
 }
 
-// page struct
 type page struct {
-	Heading string
-	Body string
-	Footer string
+	
 }
 
 var templates = template.Must(template.ParseFiles("tmpl/home.html","tmpl/carousel.tmpl"))
 var validPath = regexp.MustCompile("^/(home|view)/([a-zA-z0-9]+)$")
-var imgPaths, err = getImgs("data/carousel_imgs")
+var imgPaths, err = getImgs("img/carouselImgs/")
 
 func (c *carousel) init(imgs []string) {
 	c.Name = "carousel_imgs"
@@ -58,7 +55,8 @@ func (c *carousel) init(imgs []string) {
 	}
 }
 
-func isImg(s string) bool {
+func isImg(imgName string) bool {
+	var s = strings.ToLower(imgName)
 	switch {
 		case strings.Contains(s, "jpg"):
 			return true

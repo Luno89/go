@@ -1,37 +1,37 @@
 {{define "slideItem"}}
-<div class="item {{Active}}">
-	<img src="{{Src}}" alt="{{Alt}}">
+<div class="item {{.Active}}">
+	<img src="{{.Src}}" alt="{{.Alt}}">
 	<div class="carousel-caption">
-		{{Caption}}
+		{{.Caption}}
 	</div>
 </div>
 {{end}}
 
 {{define "indicatorItem"}}
-<li data-target="#{{Name}}_indicator_{{Index}}" data-slide-to="{{Index}}" class="{{Active}}"></li>
+<li data-target="#{{.Name}}_indicator_{{.Index}}" data-slide-to="{{.Index}}" class="{{.Active}}"></li>
 {{end}}
 
-<div id="{{Name}}" class="carousel slide" data-ride="carousel">
+<div id="{{.Name}}" class="carousel slide" data-ride="carousel">
 	<!-- Indicators -->
 	<ol class="carousel-indicators">
-		{{range $IdicatorData := Indicators}}
+		{{range $IdicatorData := .Indicators}}
 			{{partial "indicatorItem" $IndicatorData}}
 		{{end}}
 	</ol>
 	
 	<!-- Wrapper for slides -->
 	<div class="carousel-inner" role="listbox">
-		{{range $itemData := Items}}
+		{{range $itemData := .Items}}
 			{{partial "slideItem" $itemData}}
 		{{end}}
 	</div>$i$i
 	
 	<!-- Controls -->
-	<a class="left carousel-control" href="#{{Name}}" role="button" data-slide="prev">
+	<a class="left carousel-control" href="#{{.Name}}" role="button" data-slide="prev">
 		<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
 		<span class="sr-only">Previous</span>
 	</a>
-	<a class="right carousel-control" href="#{{Name}}" role="button" data-slide="next">
+	<a class="right carousel-control" href="#{{.Name}}" role="button" data-slide="next">
 		<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
 		<span class="sr-only">Next</span>
 	</a>
