@@ -33,13 +33,16 @@ type indicator struct {
 	Active string
 }
 
-type page struct {
-	
+type Model struct {
+	c carousel
 }
 
 var templates = template.Must(template.ParseFiles("tmpl/home.html","tmpl/carousel.tmpl"))
 var validPath = regexp.MustCompile("^/(home|view)/([a-zA-z0-9]+)$")
 var imgPaths, err = getImgs("img/carouselImgs/")
+homeModel = buildHome()
+
+/*********************** Init Functions *******************************/
 
 func (c *carousel) init(imgs []string) {
 	c.Name = "carousel_imgs"
@@ -81,17 +84,25 @@ func getImgs(path string) (*[]string, error){
 	return &pathList, err
 }
 
+func buildHome() {
+	var c carousel
+	c.init(imgPaths)
+	return &c
+}
+
+/************************ View Functions ******************************/
+
 func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
-	p, err := loadPage(title)
+	/*p, err := loadModel(title)
 	if err != nil {
 		http.Redirect(w, r, "/home", http.StatusFound)
 		return
 	}
-	renderTemplate(w, "view", p)
+	renderTemplate(w, "view", p)*/
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "home", "")
+	renderTemplate(w, "home", homeModel)
 }
 
 func makeHandler(fn func (http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
@@ -103,6 +114,13 @@ func makeHandler(fn func (http.ResponseWriter, *http.Request, string)) http.Hand
 		}
 		fn(w, r, m[2])
 	}		
+}
+
+func renderTemplate(w http.ResponseWriter, tmpl string, m *Model) {
+	err := templates.ExecuteTemplate(w, tmpl + ".html", m)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func main() {
