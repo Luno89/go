@@ -11,6 +11,10 @@ import (
     "strings"
 )
 
+var (
+	addr = flag.Bool("addr", false, "find open address and print to final-port.txt")
+)
+
 // carousel data
 type carousel struct {
 	Name string
@@ -37,16 +41,16 @@ type Model struct {
 	c carousel
 }
 
-var templates = template.Must(template.ParseFiles("tmpl/home.html","tmpl/carousel.tmpl"))
+var templates = template.Must(template.ParseFiles("tmpl/home.tmpl","tmpl/carousel.tmpl"))
 var validPath = regexp.MustCompile("^/(home|view)/([a-zA-z0-9]+)$")
 var imgPaths, err = getImgs("img/carouselImgs/")
-homeModel = buildHome()
+var homeModel = buildHome()
 
 /*********************** Init Functions *******************************/
 
 func (c *carousel) init(imgs []string) {
 	c.Name = "carousel_imgs"
-	for i, value := range imgs {
+	for i := range imgs {
 		var active = ""
 		if i == 0 {
 			active = "active"
@@ -84,10 +88,10 @@ func getImgs(path string) (*[]string, error){
 	return &pathList, err
 }
 
-func buildHome() {
+func buildHome() (*Model){
 	var c carousel
-	c.init(imgPaths)
-	return &c
+	c.init(*imgPaths)
+	return &Model{c:c}
 }
 
 /************************ View Functions ******************************/
