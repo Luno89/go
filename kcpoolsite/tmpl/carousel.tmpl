@@ -11,18 +11,19 @@
 <li data-target="#{{.Name}}_indicator_{{.Index}}" data-slide-to="{{.Index}}" class="{{.Active}}"></li>
 {{end}}
 
+{{define "carousel"}}
 <div id="{{.Name}}" class="carousel slide" data-ride="carousel">
 	<!-- Indicators -->
 	<ol class="carousel-indicators">
-		{{range $IdicatorData := .Indicators}}
-			{{partial "indicatorItem" $IndicatorData}}
+		{{range $IndicatorData := .Indicators}}
+			{{template "indicatorItem" $IndicatorData}}
 		{{end}}
 	</ol>
 	
 	<!-- Wrapper for slides -->
 	<div class="carousel-inner" role="listbox">
 		{{range $itemData := .Items}}
-			{{partial "slideItem" $itemData}}
+			{{template "slideItem" $itemData}}
 		{{end}}
 	</div>$i$i
 	
@@ -36,3 +37,4 @@
 		<span class="sr-only">Next</span>
 	</a>
 </div>
+{{end}}

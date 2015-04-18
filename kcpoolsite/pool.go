@@ -9,6 +9,7 @@ import (
     "net/http"
     "regexp"
     "strings"
+    "fmt"
 )
 
 var (
@@ -38,7 +39,7 @@ type indicator struct {
 }
 
 type Model struct {
-	c carousel
+	C carousel
 }
 
 var templates = template.Must(template.ParseFiles("tmpl/home.tmpl","tmpl/carousel.tmpl"))
@@ -55,6 +56,10 @@ func (c *carousel) init(imgs []string) {
 		if i == 0 {
 			active = "active"
 		}
+		if imgs[i] == "" {
+			continue
+		}
+		fmt.Printf("%+v\n", imgs[i])
 		temp := item{imgs[i], "image", active, ""}
 		indicator := indicator{c.Name, i, active}
 		c.Items = append(c.Items, temp)
@@ -82,7 +87,9 @@ func getImgs(path string) (*[]string, error){
 	pathList := make([]string, len(fileInfos))
 	for i := 0; i < len(fileInfos); i++ {
 		if fileInfos[i].IsDir() != true && isImg(fileInfos[i].Name()) {
-			pathList = append(pathList, fileInfos[i].Name())
+			pathList[i] = path + fileInfos[i].Name()
+			//pathList = append(pathList, fileInfos[i].Name())
+			//fmt.Printf("%+v\n", fileInfos[i].Name())
 		}
 	}
 	return &pathList, err
@@ -91,7 +98,7 @@ func getImgs(path string) (*[]string, error){
 func buildHome() (*Model){
 	var c carousel
 	c.init(*imgPaths)
-	return &Model{c:c}
+	return &Model{C:c}
 }
 
 /************************ View Functions ******************************/
@@ -121,7 +128,7 @@ func makeHandler(fn func (http.ResponseWriter, *http.Request, string)) http.Hand
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, m *Model) {
-	err := templates.ExecuteTemplate(w, tmpl + ".html", m)
+	err := templates.ExecuteTemplate(w, tmpl + ".tmpl", m)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -131,6 +138,7 @@ func main() {
 	flag.Parse()
 	http.HandleFunc("/view/", makeHandler(viewHandler))
 	http.HandleFunc("/", indexHandler)
+	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("img/"))))
 	
 	if *addr {
 		l, err := net.Listen("tcp", "127.0.0.1:0")
