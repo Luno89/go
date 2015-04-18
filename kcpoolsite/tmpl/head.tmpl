@@ -1,0 +1,16 @@
+{{define "style"}}
+<link rel="stylesheet" href="{{.Path}}">
+{{end}}
+
+{{define "header"}}
+<!DOCTYPE html>
+<head>
+	<meta content="" name="description"></meta>
+	<meta content="" name="author"></meta>
+	<title></title>
+	<!-- css -->
+	{{range $path := .StylePaths}}
+		{{template "style" $path}}
+	{{end}}
+</head>
+{{end}}
