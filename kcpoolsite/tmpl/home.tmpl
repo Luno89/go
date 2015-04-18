@@ -1,0 +1,11 @@
+{{define "script"}}
+<script src"{{.Path}}"></script>
+{{end}}
+
+<body>
+	{{template "carousel" .C}}
+</body>
+
+{{range $path := .ScriptPaths}}
+	{{template "script" $path}}
+{{end}}
