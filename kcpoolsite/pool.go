@@ -41,11 +41,14 @@ type indicator struct {
 type Model struct {
 	C           carousel
 	ScriptPaths []string
+	StylePaths	[]string
 }
 
-var templates = template.Must(template.ParseFiles("tmpl/home.tmpl", "tmpl/carousel.tmpl"))
+var templates = template.Must(template.ParseFiles("tmpl/home.tmpl", "tmpl/carousel.tmpl", "tmpl/head.tmpl", "tmpl/footer.tmpl"))
 var validPath = regexp.MustCompile("^/(home|view)/([a-zA-z0-9]+)$")
-var imgPaths, err = getImgs("img/carouselImgs/")
+var imgPaths, cssPaths, jsPaths *[]string
+var err error
+
 var homeModel = buildHome()
 
 /*********************** Init Functions *******************************/
@@ -96,10 +99,26 @@ func getImgs(path string) (*[]string, error) {
 	return &pathList, err
 }
 
+func getDirPath(path string) (*[]string, error) {
+	var fileInfos, err = ioutil.ReadDir(path)
+	pathList := make([]string, len(fileInfos))
+	for i := 0; i < len(fileInfos); i++ {
+		if fileInfos[i].IsDir() != true {
+			pathList[i] = path + fileInfos[i].Name()
+			//pathList = append(pathList, fileInfos[i].Name())
+			fmt.Printf("%+v\n", fileInfos[i].Name())
+		}
+	}
+	return &pathList, err
+}
+
 func buildHome() *Model {
+	imgPaths, err = getImgs("img/carouselImgs/")
+	cssPaths, err = getDirPath("css/")
+	jsPaths, err = 	getDirPath("js/")
 	var c carousel
 	c.init(*imgPaths)
-	return &Model{C: c, ScriptPaths: []string{}}
+	return &Model{C: c, ScriptPaths: *jsPaths, StylePaths: *cssPaths}
 }
 
 /************************ View Functions ******************************/

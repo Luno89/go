@@ -1,11 +1,12 @@
 {{define "script"}}
-<script src = "{{.Path}}"></script>
+<script src = "{{.}}"></script>
 {{end}}
-
+{{template "header" .}}
 <body>
 	{{template "carousel" .C}}
 </body>
-
+{{template "footer" .}}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 {{range $path := .ScriptPaths}}
 	{{template "script" $path}}
 {{end}}
