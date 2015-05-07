@@ -38,10 +38,20 @@ type indicator struct {
 	Active string
 }
 
+type featurette struct {
+	IsPushed bool
+	Name     string
+	Heading  string
+	Body     string
+	SrcData  string
+	ImgPath  string
+}
+
 type Model struct {
 	C           carousel
 	ScriptPaths []string
-	StylePaths	[]string
+	StylePaths  []string
+	Entries     []featurette
 }
 
 var templates = template.Must(template.ParseFiles("tmpl/home.tmpl", "tmpl/carousel.tmpl", "tmpl/head.tmpl", "tmpl/footer.tmpl"))
@@ -115,7 +125,7 @@ func getDirPath(path string) (*[]string, error) {
 func buildHome() *Model {
 	imgPaths, err = getImgs("img/carouselImgs/")
 	cssPaths, err = getDirPath("css/")
-	jsPaths, err = 	getDirPath("js/")
+	jsPaths, err = getDirPath("js/")
 	var c carousel
 	c.init(*imgPaths)
 	return &Model{C: c, ScriptPaths: *jsPaths, StylePaths: *cssPaths}

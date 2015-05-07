@@ -2,7 +2,8 @@
 <hr class="featurette-divier">
 {{end}}
 
-{{if .isPushed}}
+{{define "featurette"}}
+{{if .IsPushed}}
 	{{$leftclass = "col-md-push-5"}}
 	{{$rightclass = "cool-md-pull-7"}}
 {{end}}
@@ -24,3 +25,5 @@
 	</div>
 	::after
 </div>
+<hr class="featurette-divider">
+{{end}}
