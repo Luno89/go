@@ -57,6 +57,7 @@ type Model struct {
 var templates = template.Must(template.ParseFiles("tmpl/home.tmpl", "tmpl/carousel.tmpl", "tmpl/head.tmpl", "tmpl/footer.tmpl"))
 var validPath = regexp.MustCompile("^/(home|view)/([a-zA-z0-9]+)$")
 var imgPaths, cssPaths, jsPaths *[]string
+var entries *[]featurette
 var err error
 
 var homeModel = buildHome()
@@ -79,6 +80,25 @@ func (c *carousel) init(imgs []string) {
 		c.Items = append(c.Items, temp)
 		c.Indicators = append(c.Indicators, indicator)
 	}
+}
+
+func (f *featurette) init(dirPath string, index int) {
+	var fileInfos, err = ioutil.ReadDir(dirPath)
+	for i := range fileInfos {
+		var n = fileInfos[i].name()
+		switch {
+		case strings.Contains(n, "body"):
+			f.Body = ioutil.ReadFile(dirPath + n)
+		case strings.Contains(n, "header"):
+			f.Heading = ioutil.ReadAll(dirPath + n)
+		case isImg(dirPath + n):
+			f.ImgPath = dirPath + n
+		default:
+		}
+	}
+	f.SrcData = ""
+	f.IsPushed = index % 2
+	f.Name = "featurette" + index
 }
 
 func isImg(imgName string) bool {
@@ -122,10 +142,21 @@ func getDirPath(path string) (*[]string, error) {
 	return &pathList, err
 }
 
+func getFeaturettes(dirPath string) {
+	var fileInfos, err = ioutil.ReadDir(dirPath)
+	entries := make([]featurette, len(fileInfos))
+	for i := 0; i < len(fileInfos); i++ {
+		if fileInfos[i].IsDir() == true {
+			entries[i].init(fileInfos[i].Name())
+		}
+	}
+}
+
 func buildHome() *Model {
 	imgPaths, err = getImgs("img/carouselImgs/")
 	cssPaths, err = getDirPath("css/")
 	jsPaths, err = getDirPath("js/")
+	getFeaturettes("")
 	var c carousel
 	c.init(*imgPaths)
 	return &Model{C: c, ScriptPaths: *jsPaths, StylePaths: *cssPaths}
