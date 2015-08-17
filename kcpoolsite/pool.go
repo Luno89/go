@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"strconv"
 )
 
 var (
@@ -41,8 +42,8 @@ type indicator struct {
 type featurette struct {
 	IsPushed bool
 	Name     string
-	Heading  string
-	Body     string
+	Heading  []byte
+	Body     []byte
 	SrcData  string
 	ImgPath  string
 }
@@ -85,20 +86,23 @@ func (c *carousel) init(imgs []string) {
 func (f *featurette) init(dirPath string, index int) {
 	var fileInfos, err = ioutil.ReadDir(dirPath)
 	for i := range fileInfos {
-		var n = fileInfos[i].name()
+		var n = fileInfos[i].Name()
 		switch {
 		case strings.Contains(n, "body"):
-			f.Body = ioutil.ReadFile(dirPath + n)
+			f.Body, err = ioutil.ReadFile(dirPath + n)
 		case strings.Contains(n, "header"):
-			f.Heading = ioutil.ReadAll(dirPath + n)
+			f.Heading, err = ioutil.ReadFile(dirPath + n)
 		case isImg(dirPath + n):
 			f.ImgPath = dirPath + n
 		default:
 		}
 	}
+	if err != nil {
+		
+	}
 	f.SrcData = ""
-	f.IsPushed = index % 2
-	f.Name = "featurette" + index
+	f.IsPushed = index % 2 == 1
+	f.Name = "featurette" + strconv.Itoa(index)
 }
 
 func isImg(imgName string) bool {
@@ -147,8 +151,11 @@ func getFeaturettes(dirPath string) {
 	entries := make([]featurette, len(fileInfos))
 	for i := 0; i < len(fileInfos); i++ {
 		if fileInfos[i].IsDir() == true {
-			entries[i].init(fileInfos[i].Name())
+			entries[i].init(fileInfos[i].Name(), i)
 		}
+	}
+	if err != nil {
+		
 	}
 }
 
