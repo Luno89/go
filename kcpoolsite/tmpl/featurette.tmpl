@@ -1,11 +1,13 @@
-{{define "featurette-divier"}}
-<hr class="featurette-divier">
+{{define "featurette-divider"}}
+<hr class="featurette-divider">
 {{end}}
 
 {{define "featurette"}}
+{{$leftclass := ""}}
+{{$rightclass := ""}}
 {{if .IsPushed}}
-	{{$leftclass = "col-md-push-5"}}
-	{{$rightclass = "cool-md-pull-7"}}
+	{{$leftclass := "col-md-push-5"}}
+	{{$rightclass := "cool-md-pull-7"}}
 {{end}}
 
 <div id={{.Name}} class="row featurette">

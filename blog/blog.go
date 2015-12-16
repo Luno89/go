@@ -55,7 +55,7 @@ type Model struct {
 	Entries     []featurette
 }
 
-var templates = template.Must(template.ParseFiles("tmpl/home.tmpl", "tmpl/carousel.tmpl", "tmpl/head.tmpl", "tmpl/footer.tmpl", "tmpl/featurette.tmpl"))
+var templates = template.Must(template.ParseFiles("tmpl/home.tmpl", "tmpl/carousel.tmpl", "tmpl/head.tmpl", "tmpl/footer.tmpl"))
 var validPath = regexp.MustCompile("^/(home|view)/([a-zA-z0-9]+)$")
 var imgPaths, cssPaths, jsPaths *[]string
 var entries *[]featurette
