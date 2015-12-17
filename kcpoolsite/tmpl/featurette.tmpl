@@ -9,9 +9,8 @@
 	{{$leftclass := "col-md-push-5"}}
 	{{$rightclass := "cool-md-pull-7"}}
 {{end}}
-
+<hr class="featurette-divider">
 <div id={{.Name}} class="row featurette">
-	::before
 	<div class="col-md-7 {{$leftclass}}" >
 		<h2 class="featurette-heading">
 			{{.Heading}}
@@ -20,12 +19,9 @@
 			{{.Body}}
 		</p>
 	</div>
-	<div class="col-md-5 {{$rightclass}}>
-		<img class="featurette-image img-responsive center-block"
-		data-src="{{.SrcData}}" alt="500x500" src="{{.ImgPath}}"
-		data-holder-rendered="true">
+	<div class="col-md-5 {{$rightclass}}">
+		<img class="featurette-image img-responsive" alt="500x500" src="{{.ImgPath}}" data-holder-rendered="true">
 	</div>
-	::after
 </div>
-<hr class="featurette-divider">
+
 {{end}}

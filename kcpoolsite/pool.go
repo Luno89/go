@@ -85,22 +85,24 @@ func (c *carousel) init(imgs []string) {
 
 func (f *featurette) init(dirPath string, index int) {
 	var fileInfos, err = ioutil.ReadDir(dirPath)
+	fmt.Printf("%+v\n", "Initing " + strconv.Itoa(len(fileInfos)) + " featurettes")
 	for i := range fileInfos {
-		var n = fileInfos[i].Name()
+		var n = dirPath + "/" + fileInfos[i].Name()
+		fmt.Printf("%+v\n", "Initing a featurette at " + dirPath + fileInfos[i].Name())
 		switch {
 		case strings.Contains(n, "body"):
-			f.Body, err = ioutil.ReadFile(dirPath + n)
+			f.Body, err = ioutil.ReadFile( n)
 		case strings.Contains(n, "header"):
-			f.Heading, err = ioutil.ReadFile(dirPath + n)
+			f.Heading, err = ioutil.ReadFile( n)
 		case isImg(dirPath + n):
-			f.ImgPath = dirPath + n
+			f.ImgPath =  n
 		default:
 		}
 	}
 	if err != nil {
 		
 	}
-	f.SrcData = ""
+	//f.SrcData = ""
 	f.IsPushed = index % 2 == 1
 	f.Name = "featurette" + strconv.Itoa(index)
 }
@@ -146,27 +148,31 @@ func getDirPath(path string) (*[]string, error) {
 	return &pathList, err
 }
 
-func getFeaturettes(dirPath string) {
+func getFeaturettes(dirPath string) (*[]featurette, error){
 	var fileInfos, err = ioutil.ReadDir(dirPath)
+	fmt.Printf("%+v\n", len(fileInfos))
 	entries := make([]featurette, len(fileInfos))
 	for i := 0; i < len(fileInfos); i++ {
 		if fileInfos[i].IsDir() == true {
-			entries[i].init(fileInfos[i].Name(), i)
+			entries[i].init(dirPath + fileInfos[i].Name(), i)
+			fmt.Printf("%+v\n", entries)
 		}
 	}
 	if err != nil {
-		
+		fmt.Printf("%+v\n", err)
 	}
+	return &entries, err
 }
 
 func buildHome() *Model {
 	imgPaths, err = getImgs("img/carouselImgs/")
 	cssPaths, err = getDirPath("css/")
 	jsPaths, err = getDirPath("js/")
-	getFeaturettes("")
+	entries, err = getFeaturettes("featurettes/")
 	var c carousel
 	c.init(*imgPaths)
-	return &Model{C: c, ScriptPaths: *jsPaths, StylePaths: *cssPaths}
+	fmt.Printf("%+v\n", entries)
+	return &Model{C: c, ScriptPaths: *jsPaths, StylePaths: *cssPaths, Entries: *entries}
 }
 
 /************************ View Functions ******************************/
@@ -211,6 +217,7 @@ func main() {
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("js/"))))
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css/"))))
 	http.Handle("/fonts/", http.StripPrefix("/fonts/", http.FileServer(http.Dir("fonts/"))))
+	http.Handle("/featurettes/", http.StripPrefix("/featurettes/", http.FileServer(http.Dir("featurettes/"))))
 
 	if *addr {
 		l, err := net.Listen("tcp", "127.0.0.1:0")
